@@ -1,14 +1,8 @@
 #include <vector>
 #include <string>
 #include <array>
+#include "vec.h"
 
-
-struct vec3 {
-    float x, y, z;
-    vec3 toScreen(int width, int height) const {
-        return { (x+1.f)*width/2.f, (y+1.f)*height/2.f, (z+1.f)*255/2.f };
-    }
-};
 
 class Model {
     std::vector<vec3> verts = {};

@@ -104,9 +104,9 @@ int main(int argc, char** argv) {
     for (int i = 0; i < model.nfaces(); i++)
     {
         auto faces = model.face(i);
-        auto vec_a = model.vert(faces[0]).toScreen(width, height);
-        auto vec_b = model.vert(faces[1]).toScreen(width, height);
-        auto vec_c = model.vert(faces[2]).toScreen(width, height);
+        auto vec_a = model.vert(faces[0]).rotate(30.).perspective().toScreen(width, height);
+        auto vec_b = model.vert(faces[1]).rotate(30.).perspective().toScreen(width, height);
+        auto vec_c = model.vert(faces[2]).rotate(30.).perspective().toScreen(width, height);
         triangle(vec_a, vec_b, vec_c, framebuffer, dept);
     }
     

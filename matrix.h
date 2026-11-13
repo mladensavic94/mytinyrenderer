@@ -1,4 +1,6 @@
 #pragma once
+#include <cassert>
+#include <cmath>
 #include <utility>
 #include "vec.h"
 
@@ -6,6 +8,34 @@ template<int nrows, int ncols, typename T> struct matrix {
     vec<ncols,T> rows[nrows] = {};
     vec<ncols,T>&       operator[](int i)       { assert(i>=0 && i<nrows); return rows[i]; }
     const vec<ncols,T>& operator[](int i) const { assert(i>=0 && i<nrows); return rows[i]; }
+    T det() const {
+        static_assert(nrows == ncols, "det needs a square matrix");
+        if constexpr (nrows == 1) return rows[0][0];
+        else {
+            T ret = 0;
+            for (int i=ncols; i--; ret += rows[0][i] * cofactor(0,i));
+            return ret;
+        }
+    }
+
+    T cofactor(const int row, const int col) const {
+        static_assert(nrows == ncols, "cofactor needs a square matrix");
+        matrix<nrows-1,ncols-1,T> submatrix;
+        for (int i=nrows-1; i--; )
+            for (int j=ncols-1;j--; submatrix[i][j]=rows[i+int(i>=row)][j+int(j>=col)]);
+        return submatrix.det() * ((row+col)%2 ? -1 : 1);
+    }
+
+    matrix<nrows,ncols,T> invert_transpose() const {
+        static_assert(nrows == ncols, "invert_transpose needs a square matrix");
+        matrix<nrows,ncols,T> ret;
+        for (int i=nrows; i--; )
+            for (int j=ncols; j--; ret[i][j]=cofactor(i,j));
+        T d = ret[0]*rows[0]; // det
+        assert(d != T(0) && "matrix is singular");
+        for (int i=nrows; i--; ret[i] = ret[i]*(T(1)/d));
+        return ret;
+    }
 };
 
 template<int nrows, int ncols, typename T>
